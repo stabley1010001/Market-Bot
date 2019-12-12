@@ -4,8 +4,6 @@ import discord
 from discord.ext import commands
 
 
-print('start')
-'''
 TOKEN = "NjU0NTQ1MDg5MjM4MTM4ODgw.XfKD2g.Gq8Qq1JL6oGJ7CCHc6Iya05qIAw"
 GUILD = "Free Market"
 
@@ -35,7 +33,6 @@ async def on_member_join(member):
     )
 
 
-
 @bot.command(name='create_new_shop', help='Creates a new private text channel')
 async def create_new_shop(ctx, name):
     cat = discord.utils.get(ctx.guild.categories, name="Front Page")
@@ -43,4 +40,4 @@ async def create_new_shop(ctx, name):
     await ctx.send(f'New text channel {name} created!')
 
 bot.run(TOKEN)
-'''
+
