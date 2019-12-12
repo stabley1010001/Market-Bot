@@ -5,7 +5,7 @@ import discord
 from discord.ext import commands
 
 
-TOKEN = "NjU0NTQ1MDg5MjM4MTM4ODgw.XfHJqw.NTgn2jJWdJFQ4jVFqIPXEugm5f0"
+TOKEN = "NjU0NTQ1MDg5MjM4MTM4ODgw.XfKD2g.Gq8Qq1JL6oGJ7CCHc6Iya05qIAw"
 GUILD = "Free Market"
 
 bot = commands.Bot(command_prefix='!')
