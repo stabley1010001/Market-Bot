@@ -2,12 +2,11 @@
 import os
 
 import discord
-from dotenv import load_dotenv
 from discord.ext import commands
 
-load_dotenv()
-TOKEN = os.environ['DISCORD_TOKEN']
-GUILD = os.environ['DISCORD_GUILD']
+
+TOKEN = "NjU0NTQ1MDg5MjM4MTM4ODgw.XfHJqw.NTgn2jJWdJFQ4jVFqIPXEugm5f0"
+GUILD = "Free Market"
 
 bot = commands.Bot(command_prefix='!')
 
