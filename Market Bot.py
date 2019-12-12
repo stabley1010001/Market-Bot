@@ -3,9 +3,11 @@ import os
 import discord
 from discord.ext import commands
 
-
-TOKEN = "NjU0NTQ1MDg5MjM4MTM4ODgw.XfKD2g.Gq8Qq1JL6oGJ7CCHc6Iya05qIAw"
-GUILD = "Free Market"
+f = open('info.txt', 'r')
+lines = f.readlines
+TOKEN = lines[0]
+GUILD = lines[1]
+f.close()
 
 bot = commands.Bot(command_prefix='!')
 print('bot created')
