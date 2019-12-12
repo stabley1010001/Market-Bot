@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 
 f = open('info.txt', 'r')
-lines = f.readlines
+lines = [line.strip() for line in f.readlines()]
 TOKEN = lines[0]
 GUILD = lines[1]
 f.close()
