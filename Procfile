@@ -1,1 +1,1 @@
-worker: python Market Bot.py
+worker: python "Market Bot.py"
