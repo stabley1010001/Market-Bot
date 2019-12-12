@@ -9,7 +9,7 @@ TOKEN = "NjU0NTQ1MDg5MjM4MTM4ODgw.XfKD2g.Gq8Qq1JL6oGJ7CCHc6Iya05qIAw"
 GUILD = "Free Market"
 
 bot = commands.Bot(command_prefix='!')
-
+'''
 @bot.event
 async def on_ready():
     for guild in bot.guilds:
@@ -32,7 +32,7 @@ async def on_member_join(member):
     await member.dm_channel.send(
         f'Hi {member.name}, welcome to the Free Market Discord server!'
     )
-
+'''
 
 
 @bot.command(name='create_new_shop', help='Creates a new private text channel')
