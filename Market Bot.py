@@ -3,11 +3,8 @@ import os
 import discord
 from discord.ext import commands
 
-f = open('info.txt', 'r')
-lines = [line.strip() for line in f.readlines()]
-TOKEN = lines[0]
-GUILD = lines[1]
-f.close()
+TOKEN = os.environ['DISCORD_TOKEN']
+GUILD = os.environ['DISCORD_GUILD']
 
 bot = commands.Bot(command_prefix='!')
 print('bot created')
