@@ -4,12 +4,12 @@ import os
 import discord
 from discord.ext import commands
 
-
+print('start')
 TOKEN = "NjU0NTQ1MDg5MjM4MTM4ODgw.XfKD2g.Gq8Qq1JL6oGJ7CCHc6Iya05qIAw"
 GUILD = "Free Market"
 
 bot = commands.Bot(command_prefix='!')
-'''
+pritn('bot created')
 @bot.event
 async def on_ready():
     for guild in bot.guilds:
@@ -25,14 +25,14 @@ async def on_ready():
     print(f'Guild Members:\n - {members}')
     categories = '\n - '.join([cat.name for cat in guild.categories])
     print(f'Categories:\n - {categories}')
-
+'''
 @bot.event
 async def on_member_join(member):
     await member.create_dm()
     await member.dm_channel.send(
         f'Hi {member.name}, welcome to the Free Market Discord server!'
     )
-'''
+
 
 
 @bot.command(name='create_new_shop', help='Creates a new private text channel')
@@ -40,5 +40,5 @@ async def create_new_shop(ctx, name):
     cat = discord.utils.get(ctx.guild.categories, name="Front Page")
     await ctx.message.guild.create_text_channel(name, category=cat)
     await ctx.send(f'New text channel {name} created!')
-
+'''
 bot.run(TOKEN)
