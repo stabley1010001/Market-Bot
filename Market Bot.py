@@ -8,7 +8,7 @@ TOKEN = "NjU0NTQ1MDg5MjM4MTM4ODgw.XfKD2g.Gq8Qq1JL6oGJ7CCHc6Iya05qIAw"
 GUILD = "Free Market"
 
 bot = commands.Bot(command_prefix='!')
-pritn('bot created')
+print('bot created')
 @bot.event
 async def on_ready():
     for guild in bot.guilds:
