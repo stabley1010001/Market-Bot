@@ -30,7 +30,7 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member):
-    await db.update_user(member.name, 1, 0)
+    db.update_user(member.name, 1, 0)
     await member.create_dm()
     await member.dm_channel.send(
         f'Hi {member.name}, welcome to the Free Market Discord server!'
@@ -44,7 +44,7 @@ async def create_new_shop(ctx, name):
         return
     user_data["num_shops"] = user_data["num_shops"] + 1
     cat = discord.utils.get(ctx.guild.categories, name="Front Page")
-    await db.update_user(user_data)
+    db.update_user(user_data)
     await ctx.message.guild.create_text_channel(name, category=cat)
     await ctx.send(f'New text channel {name} created!')
     await ctx.send(f"You now have {user_data['num_shops']}/{user_data['rank']} shops")
