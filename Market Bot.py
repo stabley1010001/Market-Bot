@@ -25,6 +25,7 @@ async def on_ready():
     print(f'Guild Members:\n - {members}')
     categories = '\n - '.join([cat.name for cat in guild.categories])
     print(f'Categories:\n - {categories}')
+    check_users()
 
 @bot.event
 async def on_member_join(member):
@@ -34,16 +35,15 @@ async def on_member_join(member):
         f'Hi {member.name}, welcome to the Free Market Discord server!'
     )
 
-
 @bot.command(name='create_new_shop', help='Creates a new private text channel')
 async def create_new_shop(ctx, name):
     user_data = get_user(ctx.message.author.name)
     if user_data["rank"] == user_data["num_shops"]:
         ctx.send("You have reached the maximum number of shops you can own")
         return
-    await user_data["num_shops"] += 1
+    user_data["num_shops"] = user_data["num_shops"] + 1
+    cat = discord.utils.get(ctx.guild.categories, name="Front Page")
     await update_user(user_data)
-    await cat = discord.utils.get(ctx.guild.categories, name="Front Page")
     await ctx.message.guild.create_text_channel(name, category=cat)
     await ctx.send(f'New text channel {name} created!')
     await ctx.send(f"You now have {user_data['num_shops']}/{user_data['rank']} shops")
