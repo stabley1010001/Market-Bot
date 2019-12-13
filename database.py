@@ -22,14 +22,17 @@ class MarketDatabase:
 
     def update_user(self, name, rank, num_shops):
         cur = self.cur
-        update_user_sql = "INSERT INTO users (name, rank, num_shops) VALUES (?, ?, ?)"
-        cur.execute(update_user_sql, (name, rank, num_shops))
+        update_user_sql = "INSERT OR REPLACE INTO users (id, name, rank, num_shops) values ((SELECT id FROM users WHERE name = ?), ?, ?, ?)"
+        cur.execute(update_user_sql, (name, name, rank, num_shops))
         self.con.commit()
 
-    def update_user(self, user_data):
+    def update_user_by_data(self, user_data):
         cur = self.cur
-        update_user_sql = "INSERT INTO users (name, rank, num_shops) VALUES (?, ?, ?)"
-        cur.execute(update_user_sql, (user_data["name"], user_data["rank"], user_data["num_shops"]))
+        update_user_sql = "INSERT OR REPLACE INTO users (id, name, rank, num_shops) values ((SELECT id FROM users WHERE name = ?), ?, ?, ?)"
+        name = user_data["name"]
+        rank = user_data["rank"]
+        num_shops = user_data["num_shops"]
+        cur.execute(update_user_sql, (name, name, rank, num_shops))
         self.con.commit()
 
     def get_user(self, name):
@@ -39,17 +42,25 @@ class MarketDatabase:
         result = cur.fetchall()[0]
         output = {"name" : name, "rank" : result[0] , "num_shops" : result[1]}
         return output
+db = MarketDatabase()
 '''
-cur.execute("DROP TABLE users")
-setup_users_table = "CREATE TABLE users (id integer PRIMARY KEY, name text NOT NULL, rank integer, num_shops integer, UNIQUE(id, name))"
-cur.execute(setup_users_table)
-update_user("Stan", 1, 0)
-update_user("GapingThrowrer20", 1, 0)
-update_user("atmost", 1, 0)
-update_user("Nav", 1, 0)
-check_users()
+db.cur.execute("DROP TABLE users")
+setup_users_table = "CREATE TABLE users (id integer PRIMARY KEY, name text NOT NULL, rank integer, num_shops integer)"
+db.cur.execute(setup_users_table)
+'''
+db.update_user("Stan", 1, 0)
+db.update_user("GapingThrowrer20", 1, 0)
+db.update_user("atmost", 1, 0)
+db.update_user("Nav", 1, 0)
+db.check_users()
+'''
+u = db.get_user("Stan")
+u["num_shops"] += 1
+db.update_user_by_data(u)
+db.check_users()
 
-u = get_user("Stan")
-print(u["rank"])
-con.commit()
+db.con.commit()
 '''
+
+
+
