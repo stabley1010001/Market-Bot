@@ -41,15 +41,15 @@ async def create_new_shop(ctx, name):
     user_data = db.get_user(ctx.message.author.name)
     print(user_data)
     if user_data["rank"] == user_data["num_shops"]:
-        ctx.send("You have reached the maximum number of shops you can own")
-        return
-    user_data = db.get_user(ctx.message.author.name)
-    user_data["num_shops"] += 1
-    db.update_user_by_data(user_data)
-    cat = discord.utils.get(ctx.guild.categories, name="Front Page")
-    await ctx.message.guild.create_text_channel(name, category=cat)
-    await ctx.send(f'New text channel {name} created!')
-    await ctx.send(f"You now have {user_data['num_shops']}/{user_data['rank']} shops")
+        await ctx.send("You have reached the maximum number of shops you can own")
+    else:
+        user_data = db.get_user(ctx.message.author.name)
+        user_data["num_shops"] += 1
+        db.update_user_by_data(user_data)
+        cat = discord.utils.get(ctx.guild.categories, name="Front Page")
+        await ctx.message.guild.create_text_channel(name, category=cat)
+        await ctx.send(f'New text channel {name} created!')
+        await ctx.send(f"You now have {user_data['num_shops']}/{user_data['rank']} shops")
 
 @bot.command(name='info', help='Lists your information')
 async def list_info(ctx):
