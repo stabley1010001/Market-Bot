@@ -39,15 +39,17 @@ async def on_member_join(member):
 @bot.command(name='create_new_shop', help='Creates a new private text channel')
 async def create_new_shop(ctx, name):
     user_data = db.get_user(ctx.message.author.name)
+    print(user_data)
     if user_data["rank"] == user_data["num_shops"]:
         ctx.send("You have reached the maximum number of shops you can own")
         return
-    user_data["num_shops"] = user_data["num_shops"] + 1
-    cat = discord.utils.get(ctx.guild.categories, name="Front Page")
-    db.update_user(user_data)
-    await ctx.message.guild.create_text_channel(name, category=cat)
-    await ctx.send(f'New text channel {name} created!')
-    await ctx.send(f"You now have {user_data['num_shops']}/{user_data['rank']} shops")
+    else:
+        user_data["num_shops"] = user_data["num_shops"] + 1
+        cat = discord.utils.get(ctx.guild.categories, name="Front Page")
+        db.update_user(user_data)
+        await ctx.message.guild.create_text_channel(name, category=cat)
+        await ctx.send(f'New text channel {name} created!')
+        await ctx.send(f"You now have {user_data['num_shops']}/{user_data['rank']} shops")
 
 @bot.command(name='info', help='Lists your information')
 async def list_info(ctx):
