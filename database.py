@@ -28,7 +28,7 @@ class MarketDatabase:
 
     def update_user(self, user_data):
         cur = self.cur
-        update_user(user_data["name"], user_data["rank"], user_data["num_shops"])
+        self.update_user(user_data["name"], user_data["rank"], user_data["num_shops"])
 
     def get_user(self, name):
         cur = self.cur
