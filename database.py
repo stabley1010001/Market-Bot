@@ -28,7 +28,9 @@ class MarketDatabase:
 
     def update_user(self, user_data):
         cur = self.cur
-        self.update_user(user_data["name"], user_data["rank"], user_data["num_shops"])
+        update_user_sql = "INSERT INTO users (name, rank, num_shops) VALUES (?, ?, ?)"
+        cur.execute(update_user_sql, (user_data["name"], user_data["rank"], user_data["num_shops"]))
+        self.con.commit()
 
     def get_user(self, name):
         cur = self.cur
