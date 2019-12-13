@@ -44,6 +44,7 @@ async def create_new_shop(ctx, name):
         ctx.send("You have reached the maximum number of shops you can own")
         return
     else:
+        user_data = db.get_user(ctx.message.author.name)
         user_data["num_shops"] = user_data["num_shops"] + 1
         cat = discord.utils.get(ctx.guild.categories, name="Front Page")
         db.update_user(user_data)
