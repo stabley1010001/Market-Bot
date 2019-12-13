@@ -1,6 +1,8 @@
 # bot.py
 import os
 import discord
+import sqlite3
+import database
 from discord.ext import commands
 
 TOKEN = os.environ['DISCORD_TOKEN']
@@ -18,7 +20,7 @@ async def on_ready():
         f'{bot.user} is connected to the following guild:\n'
         f'{guild.name}(id: {guild.id})\n'
     )
-
+    
     members = '\n - '.join([member.name for member in guild.members])
     print(f'Guild Members:\n - {members}')
     categories = '\n - '.join([cat.name for cat in guild.categories])
@@ -26,6 +28,7 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member):
+    await update_user(member.name, 1, 0)
     await member.create_dm()
     await member.dm_channel.send(
         f'Hi {member.name}, welcome to the Free Market Discord server!'
@@ -34,9 +37,21 @@ async def on_member_join(member):
 
 @bot.command(name='create_new_shop', help='Creates a new private text channel')
 async def create_new_shop(ctx, name):
-    cat = discord.utils.get(ctx.guild.categories, name="Front Page")
+    user_data = get_user(ctx.message.author.name)
+    if user_data["rank"] == user_data["num_shops"]:
+        ctx.send("You have reached the maximum number of shops you can own")
+        return
+    await user_data["num_shops"] += 1
+    await update_user(user_data)
+    await cat = discord.utils.get(ctx.guild.categories, name="Front Page")
     await ctx.message.guild.create_text_channel(name, category=cat)
     await ctx.send(f'New text channel {name} created!')
+    await ctx.send(f"You now have {user_data['num_shops']}/{user_data['rank']} shops")
 
+@bot.command(name='info', help='Lists your information')
+async def list_info(ctx):
+    user_data = get_user(ctx.message.author.name)
+    await ctx.send(f"Rank: {user_data['rank']}")
+    await ctx.send(f"Shops: {user_data['num_shops']}/{user_data['rank']}")
 bot.run(TOKEN)
 
