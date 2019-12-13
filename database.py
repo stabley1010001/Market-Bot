@@ -26,7 +26,7 @@ def update_user(name, rank, num_shops):
 
 def update_user(user_data):
     global cur
-    update_user(user_data["name"], user_data["rank"], user_data["num_shops"]
+    update_user(user_data["name"], user_data["rank"], user_data["num_shops"])
 
 def get_user(name):
     global cur
