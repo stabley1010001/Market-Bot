@@ -52,17 +52,16 @@ async def create(ctx, name, channel_category):
 @bot.command(name='remove', help='Remove one of your shops(text channels)')
 async def remove(ctx, shop_name):
     owner = ctx.message.author.name
-    if(db.remove_shop(shop_name, owner) == "success"):
-        for channel in ctx.message.guild.channels:
-            if channel.name == shop_name:
+    for channel in ctx.message.guild.channels:
+        if channel.name == shop_name:
+            if(db.remove_shop(shop_name, owner) == "success"):
                 u = db.get_user(owner)
                 free_spots = u["rank"] - u["num_shops"]
                 await channel.delete()
                 await ctx.send(f"{shop_name} has been removed. You now have {free_spots} spot(s) for shops.")
                 return
-        ctx.send(f"Can't find a shop named {shop_name}")
-    else:
-        await ctx.send("Error occurred while removing shop in the database...")
+            ctx.send("Database error...")
+    ctx.send(f"Can't find a shop named {shop_name}")
 
 @bot.command(name='set_rank', help='Set the rank of a member(Admin or above only)')
 async def set_rank(ctx, username, rank):
@@ -84,7 +83,7 @@ async def list_info(ctx):
     await ctx.send(f"Rank: {user_data['rank']}")
     await ctx.send(f"Shops: {user_data['num_shops']}/{user_data['rank']}")
     try:
-        await ctx.send('\n'.join(shop for shop in shops_owned))
+        await ctx.send(' - \n'.join(shop for shop in shops_owned))
     except:
         pass
 bot.run(TOKEN)
