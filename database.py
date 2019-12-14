@@ -60,16 +60,16 @@ class MarketDatabase:
         cur = self.cur
         test_shop_exists_sql = "SELECT name FROM shops WHERE name = ? AND owner = ?"
         remove_shop_sql = "DELETE FROM shops WHERE name = ? AND owner = ?"
-        try:
-            cur.execute(test_shop_exists_sql (name, owner))
-            cur.execute(remove_shop_sql, (name, owner))
-            u = self.get_user(owner)
-            u["num_shops"] -= 1
-            self.update_user_by_data(u)
-            self.con.commit()
-            return "success"
-        except:
-            return "failure"
+        #try:
+        cur.execute(test_shop_exists_sql (name, owner))
+        cur.execute(remove_shop_sql, (name, owner))
+        u = self.get_user(owner)
+        u["num_shops"] -= 1
+        self.update_user_by_data(u)
+        self.con.commit()
+        return "success"
+        #except:
+            #return "failure"
 
     def get_shops_owned(self, owner):
         cur = self.cur
