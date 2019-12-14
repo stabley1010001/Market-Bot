@@ -47,7 +47,6 @@ async def create_new_shop(ctx, name):
             cat = discord.utils.get(ctx.guild.categories, name="Front Page")
             await ctx.message.guild.create_text_channel(name, category=cat)
             await ctx.send(f'New text channel {name} created!')
-            await ctx.send(f"You now have {user_data['num_shops']}/{user_data['rank']} shops")
         else:
             await ctx.send("Shop name taken...")
 
@@ -55,15 +54,21 @@ async def create_new_shop(ctx, name):
 async def remove_shop(ctx, shop_name):
     owner = ctx.message.author.name
     if(db.remove_shop(shop_name, owner) == "success"):
-        await bot.delete_channel(shop_name)
-        await ctx.send(f"{shop_name} has been removed. You now have {free_spots} spots for shops.")
+        for channel in ctx.message.guild.channels:
+            if channel.name == shop_name:
+                await channel.delete()
+                await ctx.send(f"{shop_name} has been removed. You now have {free_spots} spots for shops.")
+                break
     else:
         await ctx.send("Invalid shop name...")
 
 @bot.command(name='info', help='Lists your information')
 async def list_info(ctx):
-    user_data = db.get_user(ctx.message.author.name)
+    name = ctx.message.author.name
+    user_data = db.get_user(name)
+    shops_owned = db.get_shops(name)
     await ctx.send(f"Rank: {user_data['rank']}")
     await ctx.send(f"Shops: {user_data['num_shops']}/{user_data['rank']}")
+    await ctx.send('\n'.join(shop for shop in shops_owned))
 bot.run(TOKEN)
 
