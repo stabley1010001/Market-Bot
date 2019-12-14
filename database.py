@@ -58,10 +58,12 @@ class MarketDatabase:
 
     def remove_shop(self, name, owner):
         cur = self.cur
-        test_shop_exists_sql = "SELECT id FROM shops WHERE name = ? AND owner = ?"
+        test_shop_exists_sql = "SELECT name FROM shops WHERE owner = ?"
         remove_shop_sql = "DELETE FROM shops WHERE name = ? AND owner = ?"
         try:
-            cur.execute(test_shop_exists_sql, (name, owner))
+            cur.execute(test_shop_exists_sql, (owner,))
+            if not name in cur.fetchall()[0]:
+                return "failure"
             cur.execute(remove_shop_sql, (name, owner))
             u = self.get_user(owner)
             u["num_shops"] -= 1

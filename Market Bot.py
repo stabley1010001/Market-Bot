@@ -53,14 +53,12 @@ async def create(ctx, name, channel_category):
 async def remove(ctx, shop_name):
     owner = ctx.message.author.name
     for channel in ctx.message.guild.channels:
-        if channel.name == shop_name:
-            if(db.remove_shop(shop_name, owner) == "success"):
-                u = db.get_user(owner)
-                free_spots = u["rank"] - u["num_shops"]
-                await channel.delete()
-                await ctx.send(f"{shop_name} has been removed. You now have {free_spots} spot(s) for shops.")
-                return
-            await ctx.send("Database error...")
+        if channel.name == shop_name and db.remove_shop(shop_name, owner) == "success"):
+            u = db.get_user(owner)
+            free_spots = u["rank"] - u["num_shops"]
+            await channel.delete()
+            await ctx.send(f"{shop_name} has been removed. You now have {free_spots} spot(s) for shops.")
+            return
     await ctx.send(f"Can't find a shop named \"{shop_name}\"")
 
 @bot.command(name='set_rank', help='Set the rank of a member(Admin or above only)')
