@@ -42,16 +42,16 @@ async def create(ctx, name, channel_category):
     if user_data["rank"] == user_data["num_shops"]:
         await ctx.send("You have reached the maximum number of shops you can own")
     else:
-        forbidden = ["", "Text Channels", "Voice Channels", "Admin"]
-        if channel_category in forbidden:
-            await ctx.send("You can't create your shop in that category!")
-            return
-        if(db.add_shop(name, user_data["name"]) == "success"):
-            cat = discord.utils.get(ctx.guild.categories, name=channel_category)
-            await ctx.message.guild.create_text_channel(name, category=cat)
-            await ctx.send(f'New text channel {name} created!')
+        allowed = ["Front Page"] + ["FM Channel " + n for n in range(1,3)]
+        if channel_category in allowed:
+            if(db.add_shop(name, user_data["name"]) == "success"):
+                cat = discord.utils.get(ctx.guild.categories, name=channel_category)
+                await ctx.message.guild.create_text_channel(name, category=cat)
+                await ctx.send(f'New text channel {name} created!')
+            else:
+                await ctx.send("Shop name taken...")
         else:
-            await ctx.send("Shop name taken...")
+            await ctx.send("You can't create your shop there!")
 
 @bot.command(name='remove', help='Remove one of your shops(text channels)')
 async def remove(ctx, shop_name):
