@@ -54,7 +54,8 @@ async def create_new_shop(ctx, name):
 @bot.command(name='remove_shop', help='Remove one of your shops')
 async def remove_shop(ctx, shop_name):
     owner = ctx.message.author.name
-    if(db.remove_shop(owner, shop_name) == "success"):
+    if(db.remove_shop(shop_name, owner) == "success"):
+        await bot.delete_channel(shop_name)
         await ctx.send(f"{shop_name} has been removed. You now have {free_spots} spots for shops.")
     else:
         await ctx.send("Invalid shop name...")
