@@ -10,7 +10,7 @@ db = MarketDatabase()
 TOKEN = os.environ['DISCORD_TOKEN']
 GUILD = os.environ['DISCORD_GUILD']
 
-bot = commands.Bot(command_prefix='!')
+bot = commands.Bot(command_prefix='/')
 print('bot created')
 @bot.event
 async def on_ready():
@@ -104,6 +104,18 @@ async def set_rank(ctx, username, rank):
             u["rank"] = rank
             db.update_user_by_data(u)
             await ctx.send(f"{username}'s rank has been set to {rank}")
+            return
+    await ctx.send("You are not permitted to use this command!")
+
+@bot.command(name='set_coins', help='Set the coins of a member to a certain number(Admin or above only)')
+async def set_coins(ctx, username, coins):
+    user_roles = ctx.message.author.roles
+    for role in user_roles:
+        if role.name == "Admin" or role.name == "CEO":
+            u = db.get_user(username)
+            u["coins"] = coins
+            db.update_user_by_data(u)
+            await ctx.send(f"{username} now has {coins} coins")
             return
     await ctx.send("You are not permitted to use this command!")
 
