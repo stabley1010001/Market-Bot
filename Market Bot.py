@@ -60,8 +60,8 @@ async def remove(ctx, shop_name):
                 await channel.delete()
                 await ctx.send(f"{shop_name} has been removed. You now have {free_spots} spot(s) for shops.")
                 return
-            ctx.send("Database error...")
-    ctx.send(f"Can't find a shop named {shop_name}")
+            await ctx.send("Database error...")
+    await ctx.send(f"Can't find a shop named {shop_name}")
 
 @bot.command(name='set_rank', help='Set the rank of a member(Admin or above only)')
 async def set_rank(ctx, username, rank):
@@ -83,7 +83,7 @@ async def list_info(ctx):
     await ctx.send(f"Rank: {user_data['rank']}")
     await ctx.send(f"Shops: {user_data['num_shops']}/{user_data['rank']}")
     try:
-        await ctx.send(' - \n'.join(shop for shop in shops_owned))
+        await ctx.send('\n'.join(" - " + shop for shop in shops_owned))
     except:
         pass
 bot.run(TOKEN)
