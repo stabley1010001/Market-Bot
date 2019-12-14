@@ -50,7 +50,7 @@ async def create_new_shop(ctx, name):
         else:
             await ctx.send("Shop name taken...")
 
-@bot.command(name='remove_shop', help='Remove one of your shops')
+@bot.command(name='remove_shop', help='Remove one of your shops(text channels)')
 async def remove_shop(ctx, shop_name):
     owner = ctx.message.author.name
     if(db.remove_shop(shop_name, owner) == "success"):
