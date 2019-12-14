@@ -37,7 +37,7 @@ async def on_member_join(member):
     )
 
 @bot.command(name='create_new_shop', help='Creates a new private text channel')
-async def create_new_shop(ctx, name):
+async def create_shop(ctx, name):
     user_data = db.get_user(ctx.message.author.name)
     print(user_data)
     if user_data["rank"] == user_data["num_shops"]:
@@ -60,9 +60,23 @@ async def remove_shop(ctx, shop_name):
                 free_spots = u["rank"] - u["num_shops"]
                 await channel.delete()
                 await ctx.send(f"{shop_name} has been removed. You now have {free_spots} spot(s) for shops.")
-                break
+                return
+        ctx.send(f"Can't find a shop named {shop_name}")
     else:
-        await ctx.send("Invalid shop name...")
+        await ctx.send("Error occurred while removing shop in the database...")
+
+@bot.command(name='set_rank', help='Set the rank of a member(Admin or above only)')
+async def set_rank(ctx, username, rank):
+    Admin = discord.utils.find(lambda r: r.name == 'Admin', ctx.message.server.roles)
+    CEO = discord.utils.find(lambda r: r.name == 'CEO', ctx.message.server.roles)
+    user_roles = ctx.message.author.roles
+    if Admin in user_roles or CEO in user_roles:
+        u = db.get_user(username)
+        u["rank"] = rank
+        db.update_user_by_data(u)
+        await ctx.send(f"{username}'s rank has been set to {rank}")
+    else:
+        await ctx.send("You are not permitted to use this command!")
 
 @bot.command(name='info', help='Lists your information')
 async def list_info(ctx):
