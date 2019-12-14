@@ -37,7 +37,7 @@ async def on_member_join(member):
     )
 
 @bot.command(name='create', help='Creates a new private text channel')
-async def create(ctx, name, cat_brief):
+async def create(ctx, cat_brief, name):
     user_data = db.get_user(ctx.message.author.name)
     if user_data["rank"] == user_data["num_shops"]:
         await ctx.send("You have reached the maximum number of shops you can own")
@@ -59,15 +59,12 @@ async def create(ctx, name, cat_brief):
                 await ctx.send(category_name + " does not exists...")
                 return
         
-        if cat_brief in allowed:
-            if(db.add_shop(name, user_data["name"]) == "success"):
-                cat = discord.utils.get(ctx.guild.categories, name=category_name)
-                await ctx.message.guild.create_text_channel(name, category=cat)
-                await ctx.send(f'New text channel {name} created!')
-            else:
-                await ctx.send("Shop name taken...")
+        if(db.add_shop(name, user_data["name"]) == "success"):
+            cat = discord.utils.get(ctx.guild.categories, name=category_name)
+            await ctx.message.guild.create_text_channel(name, category=cat)
+            await ctx.send(f'New text channel {name} created!')
         else:
-            await ctx.send("You can't create your shop there!")
+            await ctx.send("Shop name taken...")
 
 @bot.command(name='remove', help='Remove one of your shops(text channels)')
 async def remove(ctx, shop_name):
