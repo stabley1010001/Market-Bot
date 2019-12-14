@@ -36,22 +36,21 @@ async def on_member_join(member):
         f'Hi {member.name}, welcome to the Free Market Discord server!'
     )
 
-@bot.command(name='create_new_shop', help='Creates a new private text channel')
-async def create_shop(ctx, name):
+@bot.command(name='create', help='Creates a new private text channel')
+async def create(ctx, name, channel_category):
     user_data = db.get_user(ctx.message.author.name)
-    print(user_data)
     if user_data["rank"] == user_data["num_shops"]:
         await ctx.send("You have reached the maximum number of shops you can own")
     else:
         if(db.add_shop(name, user_data["name"]) == "success"):
-            cat = discord.utils.get(ctx.guild.categories, name="Front Page")
+            cat = discord.utils.get(ctx.guild.categories, name=channel_category)
             await ctx.message.guild.create_text_channel(name, category=cat)
             await ctx.send(f'New text channel {name} created!')
         else:
             await ctx.send("Shop name taken...")
 
-@bot.command(name='remove_shop', help='Remove one of your shops(text channels)')
-async def remove_shop(ctx, shop_name):
+@bot.command(name='remove', help='Remove one of your shops(text channels)')
+async def remove(ctx, shop_name):
     owner = ctx.message.author.name
     if(db.remove_shop(shop_name, owner) == "success"):
         for channel in ctx.message.guild.channels:
@@ -67,16 +66,15 @@ async def remove_shop(ctx, shop_name):
 
 @bot.command(name='set_rank', help='Set the rank of a member(Admin or above only)')
 async def set_rank(ctx, username, rank):
-    Admin = discord.utils.find(lambda r: r.name == 'Admin', ctx.message.server.roles)
-    CEO = discord.utils.find(lambda r: r.name == 'CEO', ctx.message.server.roles)
     user_roles = ctx.message.author.roles
-    if Admin in user_roles or CEO in user_roles:
-        u = db.get_user(username)
-        u["rank"] = rank
-        db.update_user_by_data(u)
-        await ctx.send(f"{username}'s rank has been set to {rank}")
-    else:
-        await ctx.send("You are not permitted to use this command!")
+    for role in user_roles:
+        if role.name == "Admin" or role.name == "CEO":
+            u = db.get_user(username)
+            u["rank"] = rank
+            db.update_user_by_data(u)
+            await ctx.send(f"{username}'s rank has been set to {rank}")
+            return
+    await ctx.send("You are not permitted to use this command!")
 
 @bot.command(name='info', help='Lists your information')
 async def list_info(ctx):
