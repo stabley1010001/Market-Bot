@@ -56,8 +56,10 @@ async def remove_shop(ctx, shop_name):
     if(db.remove_shop(shop_name, owner) == "success"):
         for channel in ctx.message.guild.channels:
             if channel.name == shop_name:
+                u = db.get_user(owner)
+                free_spots = u["rank"] - u["num_shops"]
                 await channel.delete()
-                await ctx.send(f"{shop_name} has been removed. You now have {free_spots} spots for shops.")
+                await ctx.send(f"{shop_name} has been removed. You now have {free_spots} spot(s) for shops.")
                 break
     else:
         await ctx.send("Invalid shop name...")
