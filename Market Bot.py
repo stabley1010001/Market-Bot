@@ -37,15 +37,31 @@ async def on_member_join(member):
     )
 
 @bot.command(name='create', help='Creates a new private text channel')
-async def create(ctx, name, channel_category):
+async def create(ctx, name, cat_brief):
     user_data = db.get_user(ctx.message.author.name)
     if user_data["rank"] == user_data["num_shops"]:
         await ctx.send("You have reached the maximum number of shops you can own")
     else:
-        allowed = ["Front Page"] + ["FM Channel " + str(n) for n in range(1,3)]
-        if channel_category in allowed:
+        category_name = "FM Channel 1"
+        if cat_brief == "frontpage":
+            isVIP = False
+            for role in ctx.message.author.roles:
+                if role.name == "VIP":
+                    isVIP = True
+                    category_name = "Front Page"
+            if not isVIP:
+                await ctx.send("Only VIPs can create their shop in the front page!")
+                return
+        elif "ch" in cat_brief:
+            category_name = "FM Channel " + cat_brief[2:]
+            cat_names = [cat.name for cat in ctx.guild.categories]
+            if not category_name in cat_names:
+                await ctx.send(category_name + " does not exists...")
+                return
+        
+        if cat_brief in allowed:
             if(db.add_shop(name, user_data["name"]) == "success"):
-                cat = discord.utils.get(ctx.guild.categories, name=channel_category)
+                cat = discord.utils.get(ctx.guild.categories, name=category_name)
                 await ctx.message.guild.create_text_channel(name, category=cat)
                 await ctx.send(f'New text channel {name} created!')
             else:
