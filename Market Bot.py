@@ -9,7 +9,7 @@ db = MarketDatabase()
 TOKEN = os.environ['DISCORD_TOKEN']
 GUILD = os.environ['DISCORD_GUILD']
 
-bot = commands.Bot(command_prefix='!')
+bot = commands.Bot(command_prefix='/')
 print('bot created')
 @bot.event
 async def on_ready():
