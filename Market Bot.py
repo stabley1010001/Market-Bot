@@ -43,7 +43,7 @@ async def agree(ctx):
     guild = ctx.message.guild
     role = get(guild.roles, name="Customer")
     await ctx.send(f"{member.name}, you are now a member and free to browse the market")
-    await bot.add_roles(member, role)
+    await member.add_roles(role)
 
 @bot.command(name='create', help='Creates a new private text channel')
 async def create(ctx, cat_brief, name):
