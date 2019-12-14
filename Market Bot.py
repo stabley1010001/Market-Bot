@@ -66,7 +66,7 @@ async def remove_shop(ctx, shop_name):
 async def list_info(ctx):
     name = ctx.message.author.name
     user_data = db.get_user(name)
-    shops_owned = db.get_shops(name)
+    shops_owned = db.get_shops_owned(name)
     await ctx.send(f"Rank: {user_data['rank']}")
     await ctx.send(f"Shops: {user_data['num_shops']}/{user_data['rank']}")
     await ctx.send('\n'.join(shop for shop in shops_owned))
