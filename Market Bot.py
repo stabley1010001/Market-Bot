@@ -61,7 +61,11 @@ async def create(ctx, cat_brief, name):
         
         if(db.add_shop(name, user_data["name"]) == "success"):
             cat = discord.utils.get(ctx.guild.categories, name=category_name)
-            await ctx.message.guild.create_text_channel(name, category=cat)
+            guild = ctx.message.guild
+            overwrites = {
+                guild.default_role: discord.PermissionOverwrite(read_messages=False)
+            }
+            await guild.create_text_channel(name, overwrites=overwrites, category=cat)
             await ctx.send(f'New text channel {name} created!')
         else:
             await ctx.send("Shop name taken...")
