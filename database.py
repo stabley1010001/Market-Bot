@@ -22,25 +22,22 @@ class MarketDatabase:
     
     def check_users(self):
         cur = self.cur
-        check_users_sql = "SELECT id, name, rank, num_shops FROM users"
+        check_users_sql = "SELECT id, name, rank, num_shops, coins FROM users"
         cur.execute(check_users_sql)
-        formatted_result = [f"{id:<5}{name:<30}{rank:<20}{num_shops:>11}" for id, name, rank, num_shops in cur.fetchall()]
-        id, name, rank, num_shops = "Id", "User", "Rank", "Shops owned"
-        print('\n'.join([f"{id:<5}{name:<30}{rank:<20}{num_shops:>11}"] + [""] + formatted_result))
+        formatted_result = [f"{id:<5}{name:<30}{rank:<11}{num_shops:>11}{coins:>11}" for id, name, rank, num_shops, coins in cur.fetchall()]
+        id, name, rank, num_shops, coins = "Id", "User", "Rank", "Shops owned", "Coins"
+        print('\n'.join([f"{id:<5}{name:<30}{rank:<11}{num_shops:>11}{coins:>11}"] + [""] + formatted_result))
 
-    def update_user(self, name, rank, num_shops):
+    def update_user(self, name, rank, num_shops, coins):
         cur = self.cur
-        update_user_sql = "INSERT OR REPLACE INTO users (id, name, rank, num_shops) values ((SELECT id FROM users WHERE name = ?), ?, ?, ?)"
-        cur.execute(update_user_sql, (name, name, rank, num_shops))
+        update_user_sql = "INSERT OR REPLACE INTO users (id, name, rank, num_shops, coins) values ((SELECT id FROM users WHERE name = ?), ?, ?, ?, ?)"
+        cur.execute(update_user_sql, (name, name, rank, num_shops, coins))
         self.con.commit()
 
     def update_user_by_data(self, user_data):
         cur = self.cur
-        update_user_sql = "INSERT OR REPLACE INTO users (id, name, rank, num_shops) values ((SELECT id FROM users WHERE name = ?), ?, ?, ?)"
-        name = user_data["name"]
-        rank = user_data["rank"]
-        num_shops = user_data["num_shops"]
-        cur.execute(update_user_sql, (name, name, rank, num_shops))
+        update_user_sql = "INSERT OR REPLACE INTO users (id, name, rank, num_shops, coins) values ((SELECT id FROM users WHERE name = ?), ?, ?, ?, ?)"
+        cur.execute(update_user_sql, (user_data["name"], user_data["name"], user_data["rank"], user_data["num_shops"], user_data["coins"]))
         self.con.commit()
 
     def add_shop(self, name, owner):
@@ -82,13 +79,20 @@ class MarketDatabase:
     
     def get_user(self, name):
         cur = self.cur
-        get_user_sql = "SELECT rank, num_shops FROM users WHERE name = ?"
+        get_user_sql = "SELECT rank, num_shops, coins FROM users WHERE name = ?"
         cur.execute(get_user_sql, (name,))
         result = cur.fetchall()[0]
-        output = {"name" : name, "rank" : result[0] , "num_shops" : result[1]}
+        output = {"name" : name, "rank" : result[0] , "num_shops" : result[1], "coins" : result[2]}
         return output
 
 db = MarketDatabase()
+
+
+db.update_user("Stan", 1, 0, 0)
+db.update_user("GapingThrowrer20", 1, 0, 0)
+db.update_user("atmost", 1, 0, 0)
+db.update_user("Nav", 1, 0, 0)
+db.check_users()
 '''
 db.cur.execute("DROP TABLE shops")
 setup_shops_table = "CREATE TABLE shops (id integer PRIMARY KEY, name text NOT NULL UNIQUE, owner text NOT NULL)"
@@ -97,14 +101,8 @@ db.con.commit()
 db.check_tables()
 
 db.cur.execute("DROP TABLE users")
-setup_users_table = "CREATE TABLE users (id integer PRIMARY KEY, name text NOT NULL, rank integer, num_shops integer)"
+setup_users_table = "CREATE TABLE users (id integer PRIMARY KEY, name text NOT NULL, rank integer, num_shops integer, coins integer)"
 db.cur.execute(setup_users_table)
-
-db.update_user("Stan", 1, 0)
-db.update_user("GapingThrowrer20", 1, 0)
-db.update_user("atmost", 1, 0)
-db.update_user("Nav", 1, 0)
-db.check_users()
 
 u = db.get_user("Stan")
 u["num_shops"] += 1
