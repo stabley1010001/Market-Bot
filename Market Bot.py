@@ -42,7 +42,7 @@ async def create(ctx, name, channel_category):
     if user_data["rank"] == user_data["num_shops"]:
         await ctx.send("You have reached the maximum number of shops you can own")
     else:
-        allowed = ["Front Page"] + ["FM Channel " + n for n in range(1,3)]
+        allowed = ["Front Page"] + ["FM Channel " + str(n) for n in range(1,3)]
         if channel_category in allowed:
             if(db.add_shop(name, user_data["name"]) == "success"):
                 cat = discord.utils.get(ctx.guild.categories, name=channel_category)
