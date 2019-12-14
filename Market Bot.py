@@ -71,6 +71,9 @@ async def list_info(ctx):
     shops_owned = db.get_shops_owned(name)
     await ctx.send(f"Rank: {user_data['rank']}")
     await ctx.send(f"Shops: {user_data['num_shops']}/{user_data['rank']}")
-    await ctx.send('\n'.join(shop for shop in shops_owned))
+    try:
+        await ctx.send('\n'.join(shop for shop in shops_owned))
+    except:
+        pass
 bot.run(TOKEN)
 
