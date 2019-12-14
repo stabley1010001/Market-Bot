@@ -53,7 +53,7 @@ async def create(ctx, name, channel_category):
 async def remove(ctx, shop_name):
     owner = ctx.message.author.name
     for channel in ctx.message.guild.channels:
-        if channel.name == shop_name and db.remove_shop(shop_name, owner) == "success"):
+        if channel.name == shop_name and db.remove_shop(shop_name, owner) == "success":
             u = db.get_user(owner)
             free_spots = u["rank"] - u["num_shops"]
             await channel.delete()
