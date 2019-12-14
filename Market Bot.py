@@ -4,6 +4,7 @@ import discord
 import sqlite3
 from database import MarketDatabase
 from discord.ext import commands
+from discord.utils import get
 
 db = MarketDatabase()
 TOKEN = os.environ['DISCORD_TOKEN']
@@ -33,23 +34,32 @@ async def on_member_join(member):
     db.update_user(member.name, 1, 0)
     await member.create_dm()
     await member.dm_channel.send(
-        f'Hi {member.name}, welcome to the Free Market Discord server!'
+        f"Hi {member.name}, welcome to the Free Market Discord server! To start browsing the market, please agree to our terms and conditions in the terms-and-conditions channel by typing \"/agree\"."
     )
+
+@bot.command(name='agree', help='Agree to our terms and conditions and start browsing the market')
+async def agree(ctx):
+    member = ctx.message.author
+    guild = ctx.message.guild
+    role = get(guild.roles, name="Customer")
+    await ctx.send(f"{member.name}, you are now a member and free to browse the market")
+    await bot.add_roles(member, role)
 
 @bot.command(name='create', help='Creates a new private text channel')
 async def create(ctx, cat_brief, name):
+    if len(ctx.message.author.roles) == 0:
+        await ctx.send("You are not yet a member. Please type /agree to agree to our terms and conditions in order to become a member.")
+        return
     user_data = db.get_user(ctx.message.author.name)
     if user_data["rank"] == user_data["num_shops"]:
         await ctx.send("You have reached the maximum number of shops you can own")
     else:
         category_name = "FM Channel 1"
         if cat_brief == "frontpage":
-            isVIP = False
-            for role in ctx.message.author.roles:
-                if role.name == "VIP":
-                    isVIP = True
-                    category_name = "Front Page"
-            if not isVIP:
+            VIP = get(ctx.message.guild.roles, name='VIP')
+            if VIP in ctx.message.author.roles:
+                category_name = "Front Page"
+            else:
                 await ctx.send("Only VIPs can create their shop in the front page!")
                 return
         elif "ch" in cat_brief:
@@ -72,6 +82,9 @@ async def create(ctx, cat_brief, name):
 
 @bot.command(name='remove', help='Remove one of your shops(text channels)')
 async def remove(ctx, shop_name):
+    if len(ctx.message.author.roles) == 0:
+        await ctx.send("You are not yet a member. Please type /agree to agree to our terms and conditions in order to become a member.")
+        return
     owner = ctx.message.author.name
     for channel in ctx.message.guild.channels:
         if channel.name == shop_name and db.remove_shop(shop_name, owner) == "success":
