@@ -31,7 +31,7 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member):
-    db.update_user(member.name, 1, 0)
+    db.update_user(member.name, 1, 0, 0)
     await member.create_dm()
     await member.dm_channel.send(
         f"Hi {member.name}, welcome to the Free Market Discord server! To start browsing the market, please agree to our terms and conditions in the terms-and-conditions channel by typing \"/agree\"."
