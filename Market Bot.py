@@ -2,6 +2,7 @@
 import os
 import discord
 import sqlite3
+import asyncio
 from database import MarketDatabase
 from discord.ext import commands
 from discord.utils import get
