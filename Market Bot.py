@@ -27,9 +27,9 @@ def periodic_check():
 def check_shop_expire():
     remove_list = db.update_all_shop_durations()
     for shop in remove_list:
-        channel = get(bot.guilds[0], name = shop[0])
+        channel = get(bot.guilds[0].channels, name = shop[0])
         await channel.delete()
-    announce_channel = get(bot.guilds[0], name = 'expired-shops-removal')
+    announce_channel = get(bot.guilds[0].channels, name = 'expired-shops-removal')
     formatted_list = [f"{shop[0]:<30}{shop[1]:<30}" for shop in remove_list]
     name, owner = "Name", "Owner"
     msg = "The following shops are expired and have been removed\n"
