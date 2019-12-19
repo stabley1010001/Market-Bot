@@ -142,12 +142,11 @@ async def list_info(ctx):
     shops_owned = db.get_shops_owned(name)
     msgs = [f"Rank: {user_data['rank']}",
             f"Money: {user_data['coins']}",
-            f"Shops: {user_data['num_shops']}/{user_data['rank']}",
-            "\n",
-            f"{'Name':<30}{'Days until expire':<30}"
+            f"Shops: {user_data['num_shops']}/{user_data['rank']}"
             ]
     try:
-        msgs.append(('\n'.join(f"{shop[0]:<30}{shop[1]:<30}" for shop in shops_owned)))
+        msg = f"{'Name':<30}{'Days until expire':<30}" + '\n'.join(f"{shop[0]:<30}{shop[1]:<30}" for shop in shops_owned
+        msgs.append(msg)
     except:
         pass
     await ctx.send('\n'.join(msgs))
