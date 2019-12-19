@@ -88,7 +88,7 @@ async def create(ctx, cat_brief, name):
             cat = discord.utils.get(ctx.guild.categories, name=category_name)
             guild = ctx.message.guild
             overwrites = {
-                guild.default_role: discord.PermissionOverwrite(read_messages=False)
+                guild.default_role: discord.PermissionOverwrite(read_messages=False),
                 ctx.message.author : discord.PermissionOverwrite()
             }
             await guild.create_text_channel(name, overwrites=overwrites, category=cat)
