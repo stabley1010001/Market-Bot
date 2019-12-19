@@ -45,7 +45,6 @@ async def on_ready():
     categories = '\n - '.join([cat.name for cat in guild.categories])
     print(f'Categories:\n - {categories}')
     db.check_users()
-    bot.loop.create_task(check_shop_expire)
 
 @bot.event
 async def on_member_join(member):
@@ -153,6 +152,7 @@ async def list_info(ctx):
         pass
     await ctx.send('\n'.join(msgs))
 
+bot.loop.create_task(check_shop_expire)
 bot.run(TOKEN)
 
 
