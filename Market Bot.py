@@ -5,6 +5,8 @@ import sqlite3
 from database import MarketDatabase
 from discord.ext import commands
 from discord.utils import get
+from datetime import datetime
+from threading import Timer
 
 db = MarketDatabase()
 TOKEN = os.environ['DISCORD_TOKEN']
@@ -12,6 +14,27 @@ GUILD = os.environ['DISCORD_GUILD']
 
 bot = commands.Bot(command_prefix='/')
 print('bot created')
+
+def periodic_check():
+    check_shop_expire()
+    x = datetime.today()
+    y = x.replace(day=x.day, hour=1, minute=0, second=0, microsecond=0) + timedelta(days=1)
+    delta_t = y - x
+    secs = delta_t.total_seconds()
+    t = Timer(secs, periodic_check())
+    t.start()
+
+def check_shop_expire():
+    remove_list = db.update_all_shop_durations()
+    for shop in remove_list:
+        channel = get(bot.guilds[0], name = shop[0])
+        await channel.delete()
+    announce_channel = get(bot.guilds[0], name = 'expired-shops-removal')
+    formatted_list = [f"{shop[0]:<30}{shop[1]:<30}" for shop in remove_list]
+    name, owner = "Name", "Owner"
+    msg = "The following shops are expired and have been removed\n"
+    await announce_channel.send(msg + '\n'.join([f"{name:<30}{owner:<30}"] + [""] + formatted_list))
+
 @bot.event
 async def on_ready():
     for guild in bot.guilds:
@@ -28,14 +51,13 @@ async def on_ready():
     categories = '\n - '.join([cat.name for cat in guild.categories])
     print(f'Categories:\n - {categories}')
     db.check_users()
+    periodic_check()
 
 @bot.event
 async def on_member_join(member):
     db.update_user(member.name, 1, 0, 0)
     await member.create_dm()
-    await member.dm_channel.send(
-        f"Hi {member.name}, welcome to the Free Market Discord server! To start browsing the market, please agree to our terms and conditions in the terms-and-conditions channel by typing \"/agree\"."
-    )
+    await member.dm_channel.send(f"Hi {member.name}, welcome to the Free Market Discord server! To start browsing the market, please agree to our terms and conditions in the terms-and-conditions channel by typing \"/agree\".")
 
 @bot.command(name='agree', help='Agree to our terms and conditions and start browsing the market')
 async def agree(ctx):
@@ -69,11 +91,12 @@ async def create(ctx, cat_brief, name):
                 await ctx.send(category_name + " does not exists...")
                 return
         
-        if(db.add_shop(name, user_data["name"]) == "success"):
+        if(db.add_shop(name, 1, user_data["name"]) == "success"):
             cat = discord.utils.get(ctx.guild.categories, name=category_name)
             guild = ctx.message.guild
             overwrites = {
                 guild.default_role: discord.PermissionOverwrite(read_messages=False)
+                ctx.message.author : discord.PermissionOverwrite()
             }
             await guild.create_text_channel(name, overwrites=overwrites, category=cat)
             await ctx.send(f'New text channel {name} created!')
@@ -124,12 +147,18 @@ async def list_info(ctx):
     name = ctx.message.author.name
     user_data = db.get_user(name)
     shops_owned = db.get_shops_owned(name)
-    await ctx.send(f"Rank: {user_data['rank']}")
-    await ctx.send(f"Coins: {user_data['coins']}")
-    await ctx.send(f"Shops: {user_data['num_shops']}/{user_data['rank']}")
+    msgs = [f"Rank: {user_data['rank']}",
+            f"Money: {user_data['coins']}",
+            f"Shops: {user_data['num_shops']}/{user_data['rank']}",
+            "\n",
+            f"{'Name':<30}{'Days until expire':<30}"
+            ]
     try:
-        await ctx.send('\n'.join("\t - " + shop for shop in shops_owned))
+        msgs.append(('\n'.join(f"{shop[0]:<30}{shop[1]:<30}" for shop in shops_owned)))
     except:
         pass
+    await ctx.send('\n'.join(msgs))
+
 bot.run(TOKEN)
+
 
