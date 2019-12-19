@@ -15,25 +15,18 @@ GUILD = os.environ['DISCORD_GUILD']
 bot = commands.Bot(command_prefix='/')
 print('bot created')
 
-def periodic_check():
-    check_shop_expire()
-    x = datetime.today()
-    y = x.replace(day=x.day, hour=1, minute=0, second=0, microsecond=0) + timedelta(days=1)
-    delta_t = y - x
-    secs = delta_t.total_seconds()
-    t = Timer(secs, periodic_check())
-    t.start()
-
-def check_shop_expire():
-    remove_list = db.update_all_shop_durations()
-    for shop in remove_list:
-        channel = get(bot.guilds[0].channels, name = shop[0])
-        channel.delete()
-    announce_channel = get(bot.guilds[0].channels, name = 'expired-shops-removal')
-    formatted_list = [f"{shop[0]:<30}{shop[1]:<30}" for shop in remove_list]
-    name, owner = "Name", "Owner"
-    msg = "The following shops are expired and have been removed\n"
-    await announce_channel.send(msg + '\n'.join([f"{name:<30}{owner:<30}"] + [""] + formatted_list))
+async def check_shop_expire():
+    while True:
+        remove_list = db.update_all_shop_durations()
+        for shop in remove_list:
+            channel = get(bot.guilds[0].channels, name = shop[0])
+            await channel.delete()
+        announce_channel = get(bot.guilds[0].channels, name = 'expired-shops-removal')
+        formatted_list = [f"{shop[0]:<30}{shop[1]:<30}" for shop in remove_list]
+        name, owner = "Name", "Owner"
+        msg = "The following shops are expired and have been removed\n"
+        await announce_channel.send(msg + '\n'.join([f"{name:<30}{owner:<30}"] + [""] + formatted_list))
+        await asyncio.sleep(86400)
 
 @bot.event
 async def on_ready():
@@ -51,7 +44,7 @@ async def on_ready():
     categories = '\n - '.join([cat.name for cat in guild.categories])
     print(f'Categories:\n - {categories}')
     db.check_users()
-    periodic_check()
+    bot.loop.create_task(check_shop_expire)
 
 @bot.event
 async def on_member_join(member):
