@@ -112,10 +112,9 @@ class MarketDatabase:
 
     def get_shops_owned(self, owner):
         cur = self.cur
-        get_shops_sql = "SELECT name FROM shops WHERE owner = ?"
+        get_shops_sql = "SELECT name, duration FROM shops WHERE owner = ?"
         cur.execute(get_shops_sql, (owner,))
-        shops = [x[0] for x in cur.fetchall()]
-        return shops
+        return cur.fetchall()
     
     
 
