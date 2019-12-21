@@ -6,8 +6,6 @@ import asyncio
 from database import MarketDatabase
 from discord.ext import commands
 from discord.utils import get
-from datetime import datetime
-from threading import Timer
 
 db = MarketDatabase()
 TOKEN = os.environ['DISCORD_TOKEN']
@@ -18,11 +16,13 @@ print('bot created')
 
 async def check_shop_expire():
     while True:
+        print("checking for expired shops")
         remove_list = db.update_all_shop_durations()
         for shop in remove_list:
-            channel = get(bot.guilds[0].channels, name = shop[0])
+            channel = get(bot.get_all_channels(), guild__name = 'Free Market', name = shop[0])
+            print("deleting " + channel.name)
             await channel.delete()
-        announce_channel = get(bot.guilds[0].channels, name = 'expired-shops-removal')
+        announce_channel = get(bot.get_all_channels(), guild__name = 'Free Market', name = 'expired-shops-removal')
         formatted_list = [f"{shop[0]:<30}{shop[1]:<30}" for shop in remove_list]
         name, owner = "Name", "Owner"
         msg = "The following shops are expired and have been removed\n"
