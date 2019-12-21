@@ -145,14 +145,15 @@ async def list_info(ctx):
             f"Shops: {user_data['num_shops']}/{user_data['rank']}"]
     try:
         shop_list = '\n'.join(f"{shop[0]:<30}{shop[1]:<30}" for shop in shops_owned)
-        msg = f"{'Name':<30}{'Days until expire':<30}"
-        msgs.append(msg)
-        msgs.append(shop_list)
+        if not shop_list == "":
+            msg = f"{'Name':<30}{'Days until expire':<30}"
+            msgs.append(msg)
+            msgs.append(shop_list)
     except:
         pass
     await ctx.send('\n'.join(msgs))
 
-bot.loop.create_task(check_shop_expire)
+bot.loop.create_task(check_shop_expire())
 bot.run(TOKEN)
 
 
