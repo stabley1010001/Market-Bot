@@ -127,24 +127,20 @@ db.update_user("atmost", 1, 0, 0)
 db.update_user("Nav", 1, 0, 0)
 db.update_user("Yeet Yi", 1, 0, 0)
 db.check_users()
-
+'''
 db.cur.execute("DROP TABLE shops")
 setup_shops_table = "CREATE TABLE shops (id integer PRIMARY KEY, name text NOT NULL UNIQUE, duration integer, owner text NOT NULL)"
 db.cur.execute(setup_shops_table)
 db.con.commit()
-db.check_shops()
-
+'''
 db.add_shop('shop1', 5, 'Stan')
 db.add_shop('shop2', 3, 'Nav')
 db.check_shops()
-db.update_all_shop_durations()
-db.check_shops()
-db.update_all_shop_durations()
-db.check_shops()
-db.update_all_shop_durations()
-db.check_shops()
-db.update_all_shop_durations()
-db.check_shops()
+print(db.update_all_shop_durations())
+print(db.update_all_shop_durations())
+print(db.update_all_shop_durations())
+for shop in db.update_all_shop_durations():
+    print(shop[0])
 
 db.cur.execute("DROP TABLE users")
 setup_users_table = "CREATE TABLE users (id integer PRIMARY KEY, name text NOT NULL, rank integer, num_shops integer, coins integer)"

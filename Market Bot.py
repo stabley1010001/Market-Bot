@@ -18,6 +18,7 @@ async def check_shop_expire():
     while True:
         print("checking for expired shops")
         remove_list = db.update_all_shop_durations()
+        print(remove_list)
         for shop in remove_list:
             for channel in bot.get_all_channels():
                 if channel.name == shop[0]:
@@ -25,11 +26,16 @@ async def check_shop_expire():
                     await channel.delete()
         for channel in bot.get_all_channels():
             if channel.name == 'expired-shops-removal':
-                formatted_list = [f"{shop[0]:<30}{shop[1]:<30}" for shop in remove_list]
+                formatted_list = []
+                for shop in remove_list:
+                    name = shop[0]
+                    owner = shop[1]
+                    formatted_list.append(f"{name:<30}{owner:<30}")
                 name, owner = "Name", "Owner"
                 msg = "The following shops are expired and have been removed\n"
                 await channel.send(msg + '\n'.join([f"{name:<30}{owner:<30}"] + [""] + formatted_list))
-        await asyncio.sleep(86400)
+        day = 86400 #seconds
+        await asyncio.sleep(120)
 
 @bot.event
 async def on_ready():
@@ -143,7 +149,7 @@ async def list_info(ctx):
     user_data = db.get_user(name)
     shops_owned = db.get_shops_owned(name)
     msgs = [f"Rank: {user_data['rank']}",
-            f"Money: {user_data['coins']}",
+            f"Money: ${user_data['coins']}",
             f"Shops: {user_data['num_shops']}/{user_data['rank']}"]
     try:
         shop_list = '\n'.join(f"{shop[0]:<30}{shop[1]:<30}" for shop in shops_owned)
