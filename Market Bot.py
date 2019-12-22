@@ -35,7 +35,7 @@ async def check_shop_expire():
                 msg = "The following shops are expired and have been removed\n"
                 await channel.send(msg + '\n'.join([f"{name:<30}{owner:<30}"] + [""] + formatted_list))
         day = 86400 #seconds
-        await asyncio.sleep(120)
+        await asyncio.sleep(day)
 
 @bot.event
 async def on_ready():
