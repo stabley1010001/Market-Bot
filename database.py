@@ -80,8 +80,8 @@ class MarketDatabase:
             shops_data[i] = (tmp[1] - 1, tmp[0], tmp[2])
         update_all_shops_sql = "UPDATE shops SET duration = ? WHERE name = ? AND owner = ?"
         cur.executemany(update_all_shops_sql, shops_data)
-        remove_shop_sql = "DELETE FROM shops WHERE name = ? AND owner = ?"
-        cur.executemany(remove_shop_sql, remove_list)
+        for shop in remove_list:
+            self.remove_shop(shop[0], shop[1])
         self.con.commit()
         return remove_list
     
@@ -120,14 +120,13 @@ class MarketDatabase:
 
 db = MarketDatabase()
 
-'''
 db.update_user("Stan", 1, 0, 0)
 db.update_user("GapingThrowrer20", 1, 0, 0)
 db.update_user("atmost", 1, 0, 0)
 db.update_user("Nav", 1, 0, 0)
 db.update_user("Yeet Yi", 1, 0, 0)
 db.check_users()
-'''
+
 db.cur.execute("DROP TABLE shops")
 setup_shops_table = "CREATE TABLE shops (id integer PRIMARY KEY, name text NOT NULL UNIQUE, duration integer, owner text NOT NULL)"
 db.cur.execute(setup_shops_table)
